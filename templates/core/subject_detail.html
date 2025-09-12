@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject.name }} Syllabus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-teal: #06b6d4;
+            --primary-teal-dark: #0891b2;
+            --primary-teal-light: #67e8f9;
+            --light-teal: #f0fdff;
+            --dark-blue: #0f172a;
+            --medium-blue: #334155;
+            --light-blue: #64748b;
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --purple-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --border-light: #e2e8f0;
+            --shadow-soft: 0 8px 25px rgba(0,0,0,0.1);
+            --shadow-medium: 0 15px 35px rgba(0,0,0,0.12);
+            --shadow-large: 0 25px 50px rgba(0,0,0,0.15);
+            --border-radius: 24px;
+            --border-radius-small: 12px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-blue);
+            background: linear-gradient(135deg, var(--light-teal) 0%, var(--white) 50%, #f0f9ff 100%);
+            min-height: 100vh;
+            padding-top: 120px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        /* Subject Header */
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .subject-title {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .progress-summary {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius-small);
+            padding: 1.2rem 2rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-gradient);
+        }
+
+        .progress-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--medium-blue);
+        }
+
+        .progress-numbers {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .section-title {
+            font-size: 1.9rem;
+            color: var(--dark-blue);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Syllabus Topics */
+        .syllabus-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .syllabus-item {
+            background: var(--light-gray);
+            border-radius: var(--border-radius-small);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .syllabus-item.completed {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: var(--medium-blue);
+        }
+
+        .syllabus-item.completed .topic-text {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .syllabus-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .status-icon.completed {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .status-icon.pending {
+            background: var(--border-light);
+            color: var(--light-blue);
+            border: 2px solid var(--border-light);
+        }
+
+        .topic-text {
+            font-weight: 500;
+            color: var(--dark-blue);
+        }
+
+        .no-content-message {
+            text-align: center;
+            padding: 3rem;
+            color: var(--light-blue);
+            font-size: 1.1rem;
+            background: var(--light-gray);
+            border-radius: var(--border-radius-small);
+        }
+
+        /* Content Table */
+        .content-table-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .content-table th {
+            background: var(--light-gray);
+            color: var(--dark-blue);
+            padding: 1.5rem 1.8rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .content-table th:first-child {
+            border-top-left-radius: var(--border-radius);
+        }
+
+        .content-table th:last-child {
+            border-top-right-radius: var(--border-radius);
+        }
+
+        .content-table td {
+            padding: 1.5rem 1.8rem;
+            border-bottom: 1px solid var(--border-light);
+            transition: var(--transition);
+            vertical-align: middle;
+        }
+
+        .content-table tr:hover td {
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        .content-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .content-table tr:last-child td:first-child {
+            border-bottom-left-radius: var(--border-radius);
+        }
+
+        .content-table tr:last-child td:last-child {
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+        /* Form Elements */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .custom-checkbox:checked {
+            background: var(--success-gradient);
+            border-color: #10b981;
+        }
+
+        .custom-checkbox:checked::before {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .action-btn {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+
+        .revision-btn {
+            background: var(--border-light);
+            color: var(--medium-blue);
+        }
+
+        .revision-btn.marked {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .revision-btn:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-type-badge {
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .content-type-badge.lab {
+            background: var(--purple-gradient);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .content-type-badge.default {
+            background: var(--warning-gradient);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .date-text {
+            color: var(--light-blue);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .subject-header {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .section-card {
+                padding: 1.8rem;
+            }
+
+            .syllabus-list {
+                grid-template-columns: 1fr;
+            }
+
+            .content-table-container {
+                font-size: 0.9rem;
+            }
+
+            .content-table th,
+            .content-table td {
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-table th,
+            .content-table td {
+                padding: 0.6rem 0.4rem;
+                font-size: 0.8rem;
+            }
+
+            .action-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Animation */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    {% include 'core/navbar.html' %}
+
+    <div class="container">
+        <!-- Subject Header -->
+        <div class="subject-header fade-in-up">
+            <h1 class="subject-title">{{ subject.name }}</h1>
+            <div class="progress-summary">
+                <div class="progress-text">Progress</div>
+                <div class="progress-numbers">{{ completed_content_count }} / {{ total_content_count }}</div>
+                <div style="font-size: 0.9rem; color: var(--light-blue); margin-top: 0.2rem;">topics completed</div>
+            </div>
+        </div>
+
+        <!-- Official Syllabus Section -->
+        <div class="section-card fade-in-up">
+            <h2 class="section-title">
+                <div class="section-icon">📋</div>
+                Official Syllabus View
+            </h2>
+            
+            {% if syllabus_topics %}
+                <ul class="syllabus-list">
+                    {% for topic in syllabus_topics %}
+                        <li class="syllabus-item {% if topic in completed_content_titles %}completed{% endif %}">
+                            <div class="status-icon {% if topic in completed_content_titles %}completed{% else %}pending{% endif %}">
+                                {% if topic in completed_content_titles %}✓{% else %}○{% endif %}
+                            </div>
+                            <div class="topic-text">{{ topic }}</div>
+                            {% if topic in completed_content_titles %}
+                                <span style="margin-left: auto; font-size: 0.8rem; color: #10b981; font-weight: 600;">DONE</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="no-content-message">
+                    📚 The official syllabus hasn't been added by the admin yet.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Daily Content Checklist Section -->
+        <div class="section-card fade-in-up">
+            <h2 class="section-title">
+                <div class="section-icon">📝</div>
+                Daily Content Checklist
+            </h2>
+
+            {% if content_list %}
+                <div class="content-table-container">
+                    <table class="content-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px; text-align: center;">Status</th>
+                                <th style="width: 35%;">Topic Name</th>
+                                <th style="width: 120px; text-align: center;">Type</th>
+                                <th style="width: 140px; text-align: center;">Date Added</th>
+                                <th style="width: 100px; text-align: center;">Action</th>
+                                <th style="width: 140px; text-align: center;">Revision</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for content in content_list %}
+                            <tr>
+                                <td style="text-align: center;">
+                                    <form method="post" action="{% url 'toggle_complete' content.id %}" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <div class="checkbox-container">
+                                            <input type="checkbox" class="custom-checkbox" onchange="this.form.submit()" {% if content.is_completed %}checked{% endif %}>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td><strong style="color: var(--dark-blue);">{{ content.title }}</strong></td>
+                                <td style="text-align: center;">
+                                    <span class="content-type-badge {% if 'lab' in content.content_type|lower %}lab{% else %}default{% endif %}">
+                                        {{ content.content_type }}
+                                    </span>
+                                </td>
+                                <td style="text-align: center;"><span class="date-text">{{ content.created_at|date:"d-M-Y" }}</span></td>
+                                <td style="text-align: center;"><a href="{% url 'content_detail' content.id %}" class="action-btn">View</a></td>
+                                <td style="text-align: center;">
+                                    <form method="post" action="{% url 'toggle_revision' content.id %}" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn revision-btn {% if content.marked_for_revision %}marked{% endif %}">
+                                            {% if content.marked_for_revision %} Marked ✓ {% else %} Mark {% endif %}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="no-content-message">
+                    📖 No content has been added for this subject yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% include 'core/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Staggered animation for cards
+            const cards = document.querySelectorAll('.fade-in-up');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+
+            // Enhanced checkbox interactions
+            const checkboxes = document.querySelectorAll('.custom-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        this.style.transform = 'scale(1.1)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 150);
+                    }
+                });
+            });
+
+            // Button hover effects
+            const buttons = document.querySelectorAll('.action-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px) scale(1.02)';
+                });
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

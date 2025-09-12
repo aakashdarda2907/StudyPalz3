@@ -1,0 +1,499 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Dashboard - StudyPalz</title>
+     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-teal: #06b6d4;
+            --primary-teal-dark: #0891b2;
+            --primary-teal-light: #67e8f9;
+            --light-teal: #f0fdff;
+            --dark-blue: #0f172a;
+            --medium-blue: #334155;
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --border-light: #e2e8f0;
+            --shadow-soft: 0 8px 25px rgba(0,0,0,0.1);
+            --shadow-medium: 0 15px 35px rgba(0,0,0,0.12);
+            --shadow-large: 0 25px 50px rgba(0,0,0,0.15);
+            --border-radius: 24px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-blue);
+            background: linear-gradient(135deg, var(--light-teal) 0%, var(--white) 50%, #f0f9ff 100%);
+            min-height: 100vh;
+            padding-top: 120px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .welcome-text {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .streak-badge {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: 16px;
+            padding: 0.8rem 1.5rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .streak-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-gradient);
+        }
+
+        .streak-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .streak-text {
+            color: var(--medium-blue);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .congrats-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            margin-bottom: 2rem;
+            animation: slideInDown 0.6s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subjects-section h2 {
+            font-size: clamp(1.8rem, 3vw, 2.2rem);
+            margin-bottom: 2rem;
+            color: var(--dark-blue);
+        }
+
+        .subjects-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        @media (min-width: 1200px) {
+            .subjects-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .subject-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: block;
+        }
+
+        .subject-card.blue::before {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+        }
+
+        .subject-card.green::before {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .subject-card.orange::before {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .subject-card.purple::before {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .subject-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .subject-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .subject-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-large);
+            text-decoration: none;
+        }
+
+        .subject-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .subject-name {
+            font-size: 1.4rem;
+            color: var(--dark-blue);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .subject-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .blue .subject-icon {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+        }
+
+        .green .subject-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .orange .subject-icon {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .purple .subject-icon {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .progress-section {
+            margin-bottom: 1rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .completion-label {
+            color: var(--medium-blue);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .completion-percentage {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .blue .completion-percentage {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .green .completion-percentage {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .orange .completion-percentage {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .purple .completion-percentage {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            appearance: none;
+        }
+
+        .blue .progress-bar::-webkit-progress-bar {
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 4px;
+        }
+
+        .blue .progress-bar::-webkit-progress-value {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .green .progress-bar::-webkit-progress-bar {
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 4px;
+        }
+
+        .green .progress-bar::-webkit-progress-value {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .orange .progress-bar::-webkit-progress-bar {
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 4px;
+        }
+
+        .orange .progress-bar::-webkit-progress-value {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .purple .progress-bar::-webkit-progress-bar {
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 4px;
+        }
+
+        .purple .progress-bar::-webkit-progress-value {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .no-subjects {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--medium-blue);
+            font-size: 1.1rem;
+            grid-column: 1 / -1;
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .subjects-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+                margin-bottom: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; }
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: center;
+                margin-bottom: 2.5rem;
+            }
+            .subjects-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            .subject-card {
+                padding: 1.8rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .streak-badge {
+                padding: 0.6rem 1rem;
+            }
+            .streak-number {
+                font-size: 1.2rem;
+            }
+            .subject-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'core/navbar.html' %}
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1 class="welcome-text">Hi, {{ user.first_name|default:user.username }}!</h1>
+            <div class="streak-badge">
+                <span style="font-size: 1.2rem;">🔥</span>
+                <div>
+                    <div class="streak-number">{{ current_streak }}</div>
+                    <div class="streak-text">day streak</div>
+                </div>
+            </div>
+        </div>
+
+        {% if streak_increased and current_streak > 1 %}
+            <div class="congrats-message">
+                🎉 Amazing! You kept your streak alive!
+            </div>
+        {% endif %}
+
+        <div class="subjects-section">
+            <h2>Your Subjects</h2>
+            <div class="subjects-container">
+                <div class="subjects-grid">
+                    {% for item in subject_progress %}
+                        <a href="{% url 'subject_detail' item.subject.id %}" class="subject-card fade-in-up 
+                           {% cycle 'blue' 'green' 'orange' 'purple' %}">
+                            <div class="subject-header">
+                                <h3 class="subject-name">{{ item.subject.name }}</h3>
+                                <div class="subject-icon">
+                                    {% if 'MI' in item.subject.name or 'Machine' in item.subject.name %}🤖
+                                    {% elif 'OOP' in item.subject.name or 'Object' in item.subject.name %}💻
+                                    {% elif 'DBMS' in item.subject.name or 'Database' in item.subject.name %}🗄️
+                                    {% elif 'FODS' in item.subject.name or 'Data Science' in item.subject.name %}📊
+                                    {% else %}📚{% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="progress-section">
+                                <div class="progress-info">
+                                    <span class="completion-label">Progress</span>
+                                    <span class="completion-percentage">{{ item.percentage }}%</span>
+                                </div>
+                                <progress class="progress-bar" value="{{ item.percentage }}" max="100"></progress>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <div class="no-subjects">
+                            <p>📚 No subjects available yet. Check back soon!</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'core/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Staggered animation for subject cards
+            const cards = document.querySelectorAll('.subject-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Animate progress bars
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const value = bar.getAttribute('value');
+                bar.setAttribute('value', 0);
+                setTimeout(() => {
+                    bar.setAttribute('value', value);
+                }, 600 + Math.random() * 400);
+            });
+        });
+    </script>
+</body>
+</html>

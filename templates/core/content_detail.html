@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ content.title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-teal: #06b6d4;
+            --primary-teal-dark: #0891b2;
+            --primary-teal-light: #67e8f9;
+            --light-teal: #f0fdff;
+            --dark-blue: #0f172a;
+            --medium-blue: #334155;
+            --light-blue: #64748b;
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --purple-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --border-light: #e2e8f0;
+            --shadow-soft: 0 8px 25px rgba(0,0,0,0.1);
+            --shadow-medium: 0 15px 35px rgba(0,0,0,0.12);
+            --shadow-large: 0 25px 50px rgba(0,0,0,0.15);
+            --border-radius: 20px;
+            --border-radius-small: 10px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-blue);
+            background: linear-gradient(135deg, var(--light-teal) 0%, var(--white) 50%, #f0f9ff 100%);
+            min-height: 100vh;
+            padding-top: 120px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius-small);
+            padding: 0.6rem 1.2rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            color: var(--medium-blue);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            text-decoration: none;
+            color: var(--dark-blue);
+        }
+
+        .back-button::before {
+            content: '←';
+            font-size: 1rem;
+            color: var(--primary-teal);
+            font-weight: bold;
+        }
+
+        /* Content Header */
+        .content-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius);
+            padding: 1.8rem 2.2rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-gradient);
+        }
+
+        .content-title {
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.6rem;
+        }
+
+        .content-type-badge {
+            display: inline-block;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.4rem;
+        }
+
+        .content-type-badge.theory {
+            background: var(--accent-gradient);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .content-type-badge.lab {
+            background: var(--purple-gradient);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Content Section Cards */
+        .content-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius);
+            padding: 1.6rem 2rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .content-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--dark-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 3px 10px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Pre and Code Styling */
+        .content-text {
+            background: var(--light-gray);
+            border-radius: var(--border-radius-small);
+            padding: 1rem;
+            border: 1px solid var(--border-light);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--dark-blue);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+        }
+
+        .code-block {
+            background: var(--dark-blue);
+            color: #e2e8f0;
+            border-radius: var(--border-radius-small);
+            padding: 1rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .code-block code {
+            color: inherit;
+            background: none;
+            font-family: inherit;
+        }
+
+        /* Video Link Button */
+        .video-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--accent-gradient);
+            color: white;
+            padding: 0.8rem 1.4rem;
+            border-radius: var(--border-radius-small);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            box-shadow: 0 6px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .video-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .video-link::before {
+            content: '🎥';
+            font-size: 1rem;
+        }
+
+        .no-content {
+            color: var(--light-blue);
+            font-style: italic;
+            padding: 0.8rem;
+            text-align: center;
+            background: rgba(100, 116, 139, 0.05);
+            border-radius: var(--border-radius-small);
+            border: 1px dashed var(--border-light);
+            font-size: 0.85rem;
+        }
+
+        /* Feedback Section */
+        .feedback-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius);
+            padding: 1.8rem 2rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .feedback-title {
+            font-size: 1rem;
+            color: var(--dark-blue);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .feedback-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: var(--border-radius-small);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .feedback-btn.helpful {
+            background: var(--success-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .feedback-btn.unhelpful {
+            background: var(--warning-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .feedback-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .feedback-thank-you {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius-small);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+            margin: 2rem 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .content-header,
+            .content-section,
+            .feedback-section {
+                padding: 1.2rem 1.5rem;
+            }
+
+            .content-title {
+                font-size: 1.4rem;
+            }
+
+            .section-title {
+                font-size: 1rem;
+            }
+
+            .feedback-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Animation */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    {% if pygments_css %}
+    <style>
+        /* Override pygments styles to match our theme */
+        .highlight {
+            background: var(--dark-blue) !important;
+            border-radius: var(--border-radius-small);
+            padding: 1rem !important;
+            margin: 1rem 0;
+            overflow-x: auto;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .highlight pre {
+            margin: 0;
+            color: #e2e8f0;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+    </style>
+    {% endif %}
+</head>
+<body>
+    {% include 'core/navbar.html' %}
+
+    <div class="container">
+        <!-- Back Button -->
+        <a href="{% url 'subject_detail' content.subject.id %}" class="back-button fade-in-up">
+            Back to {{ content.subject.name }}
+        </a>
+
+        <!-- Content Header -->
+        <div class="content-header fade-in-up">
+            <h1 class="content-title">{{ content.title }}</h1>
+            <div class="content-type-badge {% if content.content_type == 'Lab' %}lab{% else %}theory{% endif %}">
+                {{ content.content_type }}
+            </div>
+        </div>
+
+        {% if content.content_type == 'Theory' %}
+            <!-- Video Lesson Section -->
+            <div class="content-section fade-in-up">
+                <h3 class="section-title">
+                    <div class="section-icon">🎥</div>
+                    Video Lesson
+                </h3>
+                {% if content.youtube_link %}
+                    <a href="{{ content.youtube_link }}" target="_blank" class="video-link">
+                        Watch Video Lesson
+                    </a>
+                {% else %}
+                    <div class="no-content">No video lesson available</div>
+                {% endif %}
+            </div>
+
+            <!-- Notes Section -->
+            <div class="content-section fade-in-up">
+                <h3 class="section-title">
+                    <div class="section-icon">📝</div>
+                    Notes
+                </h3>
+                {% if content.notes %}
+                    <div class="content-text">{{ content.notes }}</div>
+                {% else %}
+                    <div class="no-content">No notes available</div>
+                {% endif %}
+            </div>
+
+            <!-- Viva Questions Section -->
+            <div class="content-section fade-in-up">
+                <h3 class="section-title">
+                    <div class="section-icon">❓</div>
+                    Viva Questions
+                </h3>
+                {% if content.viva_questions %}
+                    <div class="content-text">{{ content.viva_questions }}</div>
+                {% else %}
+                    <div class="no-content">No viva questions available</div>
+                {% endif %}
+            </div>
+
+        {% elif content.content_type == 'Lab' %}
+            <!-- Problem Statement Section -->
+            <div class="content-section fade-in-up">
+                <h3 class="section-title">
+                    <div class="section-icon">🎯</div>
+                    Problem Statement
+                </h3>
+                {% if content.problem_statement %}
+                    <div class="content-text">{{ content.problem_statement }}</div>
+                {% else %}
+                    <div class="no-content">No problem statement provided</div>
+                {% endif %}
+            </div>
+
+            <!-- Solution Code Section -->
+            <div class="content-section fade-in-up">
+                <h3 class="section-title">
+                    <div class="section-icon">💻</div>
+                    Solution Code
+                </h3>
+                {% if highlighted_code %}
+                    {{ highlighted_code|safe }}
+                {% elif content.solution_code %}
+                    <div class="code-block">
+                        <code>{{ content.solution_code }}</code>
+                    </div>
+                {% else %}
+                    <div class="no-content">No solution code provided</div>
+                {% endif %}
+            </div>
+
+            <!-- Explanation Section -->
+            <div class="content-section fade-in-up">
+                <h3 class="section-title">
+                    <div class="section-icon">💡</div>
+                    Explanation
+                </h3>
+                {% if content.explanation %}
+                    <div class="content-text">{{ content.explanation }}</div>
+                {% else %}
+                    <div class="no-content">No explanation available</div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="divider"></div>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section fade-in-up">
+            {% if user in content.users_voted.all %}
+                <div class="feedback-thank-you">
+                    <strong>✨ Thank you for your feedback!</strong>
+                    <p style="margin-top: 0.4rem; font-weight: normal; font-size: 0.8rem;">Your input helps us improve content quality</p>
+                </div>
+            {% else %}
+                <div class="feedback-title">Was this content helpful?</div>
+                <p style="color: var(--light-blue); margin-bottom: 1rem; font-size: 0.8rem;">Your feedback helps us create better learning materials</p>
+                <div class="feedback-buttons">
+                    <form action="{% url 'feedback' content.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="vote_type" value="helpful">
+                        <button type="submit" class="feedback-btn helpful">
+                            👍 Helpful
+                        </button>
+                    </form>
+                    <form action="{% url 'feedback' content.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="vote_type" value="unhelpful">
+                        <button type="submit" class="feedback-btn unhelpful">
+                            👎 Needs Work
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% include 'core/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Staggered animation for cards
+            const cards = document.querySelectorAll('.fade-in-up');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Enhanced button hover effects
+            const buttons = document.querySelectorAll('.feedback-btn, .video-link');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px) scale(1.02)';
+                });
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Copy code functionality
+            const codeBlocks = document.querySelectorAll('.code-block, .highlight');
+            codeBlocks.forEach(block => {
+                block.style.position = 'relative';
+                const copyBtn = document.createElement('button');
+                copyBtn.innerHTML = '📋';
+                copyBtn.style.cssText = `
+                    position: absolute;
+                    top: 0.5rem;
+                    right: 0.5rem;
+                    background: rgba(255, 255, 255, 0.1);
+                    color: white;
+                    border: none;
+                    padding: 0.2rem 0.5rem;
+                    border-radius: 4px;
+                    font-size: 0.7rem;
+                    cursor: pointer;
+                    transition: var(--transition);
+                `;
+                
+                copyBtn.addEventListener('click', () => {
+                    const code = block.textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyBtn.innerHTML = '✅';
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '📋';
+                        }, 1500);
+                    });
+                });
+                
+                block.appendChild(copyBtn);
+            });
+        });
+    </script>
+</body>
+</html>

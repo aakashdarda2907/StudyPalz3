@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Subject, Content, UserContentState, UserProfile # Add UserProfile
+from .models import Department, Subject, Content, UserContentState, UserProfile # Add UserProfile
 from django.db.models import Count, Q
 from datetime import date, timedelta # Add timedelta
 
@@ -15,19 +15,31 @@ def home_view(request):
     return render(request, 'core/home.html')
 
 def signup_view(request):
+    # Pass all departments to the template for the dropdown
+    departments = Department.objects.all()
+
     if request.method == 'POST':
         username = request.POST.get('username')
         first_name = request.POST.get('name')
         password = request.POST.get('password')
         password_confirm = request.POST.get('password_confirm')
+        department_id = request.POST.get('department') # Get department ID from form
+
         if password != password_confirm:
-            return render(request, 'core/signup.html', {'error': 'Passwords do not match'})
+            return render(request, 'core/signup.html', {'error': 'Passwords do not match', 'departments': departments})
+        
         if User.objects.filter(username=username).exists():
-            return render(request, 'core/signup.html', {'error': 'Username already exists'})
+            return render(request, 'core/signup.html', {'error': 'Username already exists', 'departments': departments})
+
+        # Create user and their profile with the selected department
         user = User.objects.create_user(username=username, password=password, first_name=first_name)
+        department = Department.objects.get(id=department_id)
+        UserProfile.objects.create(user=user, department=department) # Create profile
+        
         login(request, user)
         return redirect('dashboard')
-    return render(request, 'core/signup.html')
+
+    return render(request, 'core/signup.html', {'departments': departments})
 
 def logout_view(request):
     logout(request)
@@ -35,26 +47,34 @@ def logout_view(request):
 
 
 # UPDATED: dashboard_view with streak logic
+# In core/views.py
+
+# Replace the old dashboard_view with this one
 @login_required
 def dashboard_view(request):
-    # --- Streak Logic ---
     profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    # --- Streak Logic (remains the same) ---
     today = date.today()
     streak_increased = False
-    
     if profile.last_login_date is None or profile.last_login_date < today:
         yesterday = today - timedelta(days=1)
         if profile.last_login_date == yesterday:
             profile.current_streak += 1
             streak_increased = True
         else:
-            profile.current_streak = 1 # Reset or start streak
-        
+            profile.current_streak = 1
         profile.last_login_date = today
         profile.save()
-    # --- End of Streak Logic ---
 
-    subjects = Subject.objects.all()
+    # --- UPDATED: Subject Filtering Logic ---
+    user_department = profile.department
+    if user_department:
+        subjects = Subject.objects.filter(department=user_department)
+    else:
+        subjects = Subject.objects.none() # Show no subjects if department is not set
+    # --- End of new logic ---
+
     subject_progress = []
     for subject in subjects:
         total_content = Content.objects.filter(subject=subject).count()
@@ -68,14 +88,11 @@ def dashboard_view(request):
 
     context = {
         'subject_progress': subject_progress,
-        'current_streak': profile.current_streak, # Pass streak to template
-        'streak_increased': streak_increased, # Pass celebration flag
+        'current_streak': profile.current_streak,
+        'streak_increased': streak_increased,
+        'user_department': user_department, # Pass department to template
     }
     return render(request, 'core/dashboard.html', context)
-
-
-# UPDATED: subject_detail_view with syllabus and progress logic
-# In core/views.py
 
 @login_required
 def subject_detail_view(request, subject_id):

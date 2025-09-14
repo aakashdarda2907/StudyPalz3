@@ -4,15 +4,37 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 
-# Model for the subjects (OOP, MI, etc.)
-class Subject(models.Model):
-    name = models.CharField(max_length=100)
-    # NEW: Field to store the official syllabus text
-    syllabus = models.TextField(blank=True, null=True, help_text="Enter each syllabus topic on a new line.")
 
+# NEW: Model to represent departments
+class Department(models.Model):
+    name = models.CharField(max_length=50, unique=True) # e.g., CSAI, AIDS, IOT
+    
     def __str__(self):
         return self.name
 
+# Model for the subjects (OOP, MI, etc.)
+# In core/models.py
+
+class Subject(models.Model):
+    name = models.CharField(max_length=100)
+    syllabus = models.TextField(blank=True, null=True, help_text="Enter each syllabus topic on a new line.")
+    # FIX: Set a default department ID (assuming CSAI is ID=1)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='subjects', default=1)
+
+    # The __str__ method no longer needs the "if" check
+    def __str__(self):
+        return f"{self.name} ({self.department.name})"
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    current_streak = models.IntegerField(default=0)
+    last_login_date = models.DateField(null=True, blank=True)
+    # FIX: Set a default department ID (assuming CSAI is ID=1)
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL, related_name='users', null=True, blank=True, default=1)
+
+    def __str__(self):
+        return f'{self.user.username}\'s Profile'
 # Model for the daily content pieces
 class Content(models.Model):
     CONTENT_TYPE_CHOICES = [
@@ -56,10 +78,3 @@ class UserContentState(models.Model):
         return f'{self.user.username} - {self.content.title}'
 
 # NEW: Model to store user-specific info like streaks
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    current_streak = models.IntegerField(default=0)
-    last_login_date = models.DateField(null=True, blank=True)
-
-    def __str__(self):
-        return f'{self.user.username}\'s Profile'
